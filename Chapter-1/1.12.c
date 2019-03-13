@@ -6,16 +6,14 @@ int main() {
 
     int c, state, i = 0;
     state = OUT;
-    while((c = getchar()) != EOF)
-    {
-        if(c == ' ' || c == '\n' || c == '\t')
-        {
+    while((c = getchar()) != EOF) {
+        if(c == ' ' || c == '\n' || c == '\t') {
             state = OUT;
             putchar('\n');
-        } else if(state == IN)
+        } else if(state == IN) {
             putchar(c);
-        else if(state == OUT)
-        {
+		}
+        else if(state == OUT){
             putchar(c);
             state = IN;
         }
