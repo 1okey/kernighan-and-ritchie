@@ -2,21 +2,22 @@
 
 int main()
 {
-	char c, l;
-	while((c = getchar()) != EOF){
-		if(c == '/'){
-			if((l = getchar()) == '/'){
-				while((c = getchar()) != '\n');
-				continue;
-			}
-			if((l = getchar()) == '*'){
-				c = getchar();
-				while((l = c) != '*' && (c = getchar()) != '/');
-				continue;
-			}
-			putchar(c);
-			continue;
-		}
-		putchar(c);
-	}
+    char c, l;
+    while((c = getchar()) != EOF){
+        if(c == '/'){
+            l = getchar();
+            if(l == '/'){
+                while((c = getchar()) != '\n');
+                continue;
+            } else if(l == '*'){
+                while((l = c) && (c = getchar()))
+                    if(l == '*' && c == '/') break;
+                continue;
+            };
+            putchar(c);
+            putchar(l);
+            continue;
+        }
+        putchar(c);
+    }
 }
