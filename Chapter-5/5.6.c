@@ -66,7 +66,7 @@ void reverse(char * s){
     s[l] = t;
 }
 
-int c_getline(char * s, int lim){
+int getline(char * s, int lim){
     int c, i = 0;
 
     for(; i < lim - 1 && (c = getchar()) != EOF; ++i){
@@ -88,7 +88,7 @@ int main(){
     reverse(str);
     itoa(num, num_str);
     double float_num = atof(float_str);
-    c_getline(line,8);
+    getline(line,8);
     printf("reverse: %s\n"
            "itoa: %s\n"
            "atof: %f\n"
