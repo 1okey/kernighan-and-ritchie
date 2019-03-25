@@ -1,13 +1,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-void minprintf(char *fmt, ...){
+void minscanf(char *fmt, ...){
     va_list ap;
     char *p, *sval;
-    int ival;
-    double dval;
-    char cval;
-    void* ptrval;
+    int * ival;
+    double * dval;
+    char * cval;
+    void * ptrval;
 
     va_start(ap,fmt);
     for ( p = fmt; *p; ++p) {
@@ -16,30 +16,33 @@ void minprintf(char *fmt, ...){
             continue;
         }
         switch (*++p) {
+            case 'i':
             case 'd':
-                ival = va_arg(ap, int);
-                printf("%d", ival);
+                ival = va_arg(ap, int*);
+                scanf("%d", ival);
                 break;
             case 'f':
-                dval = va_arg(ap, double);
-                printf("%f", dval);
-                break;
-            case 'p':
-                ptrval = va_arg(ap, void*);
-                printf("%p", ptrval);
+                dval = va_arg(ap, double*);
+                scanf("%f", dval);
                 break;
             case 'x':
-                cval = va_arg(ap, char);
-                printf("%x", cval);
+                cval = va_arg(ap, char*);
+                scanf("%x", cval);
                 break;
             case 's':
                 for (sval = va_arg(ap, char*); *sval; sval++)
-                    putchar(*sval);
+                    scanf("%c", sval);
                 break;
             default:
-                putchar(*sval);
+                *sval = getchar();
                 break;
         }
     }
     va_end(ap);
+}
+
+int main() {
+    char i;
+    minscanf("%d", &i);
+    printf("entered number %c", i);
 }
