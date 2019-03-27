@@ -1,37 +1,38 @@
 #include <stdio.h>
 
-int cnt[30] = {0};
-char table[30] = {};
+#define SYMBOL_AMMOUNT 93
+#define CHAR_FROM 33
+#define SHIFT 33
+#define CHAR_TO 126
 
-int find_char(char ch){
-    int index = -1;
-    for(int i = 0; table[i]; i++)
-        if(table[i] == ch)
-            index = i;
-    return index;
+static char table[SYMBOL_AMMOUNT] = {};
+
+// SHIFT is simply a shift from start of ASCI table to start of actual characters
+char index_to_char(int index) { 
+    return index + SHIFT; 
+}
+
+int char_to_index(char character) { 
+    return character - SHIFT;
 }
 
 int main(){
     char c;
-    int index = 0, last = 0;
-    while((c = getchar()) != EOF)
-    {
-        if(c == ' ' || c == '\n' || c == '\t') continue;
-        if((index = find_char(c)) > -1)
-            cnt[index]++;
-        else{
-            table[last] = c;
-            cnt[last] = 1;
-            last++;
-        }
+    for(unsigned i = 0; i < SYMBOL_AMMOUNT; table[i] = 0, ++i);
+    while ((c = getchar()) != EOF) {
+        if(c == ' ' || c == '\n' || c == '\t') 
+            continue;
+            // if its a character, than increment count of it
+        if(CHAR_FROM < c && c < CHAR_TO)
+            table[char_to_index(c)]++;
     }
 
-    for(int i = 0; table[i]; i++){
-        printf("%c", table[i]);
-        int ammount = cnt[i];
-        for(int j = 0; j < ammount; j++)
-            printf("-");
-        printf("\n");
+    for (unsigned i = 0; i < SYMBOL_AMMOUNT; i++) {
+        if(table[i] > 0){
+            printf("\n%c ", index_to_char(i));
+            for(int j = 0; j < table[i]; j++)
+                printf("-");
+        }
     }
     return 0;
 }

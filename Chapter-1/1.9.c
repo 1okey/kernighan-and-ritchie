@@ -5,6 +5,7 @@ int main(){
     while((c = getchar()) != EOF){
 		if(c == ' '){ 
 			putchar(c);
+			// skip all further spaces
 	   		while((c = getchar()) == ' ');
 		}
 		putchar(c);

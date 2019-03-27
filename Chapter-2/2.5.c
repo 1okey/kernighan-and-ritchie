@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+
 #define true 1
 #define false 0
-
 typedef int bool;
 
 int any(char * s1, int s1l, char * s2, int s2l);
@@ -20,9 +20,9 @@ int any(char * s1, int s1l, char * s2, int s2l)
 {
     int i,j,k;
     bool skip;
-    for(i = 0; i < s1l; i++){
+    for(i = 0; i < s1l; i++) {
         k = -1;
-        for(j = 0; j < s2l; j++){
+        for(j = 0; j < s2l; j++) {
             if(s2[j] == s1[i])
                 return i;
         }

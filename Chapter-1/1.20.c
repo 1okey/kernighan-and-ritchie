@@ -3,11 +3,10 @@
 
 int main(){
     char c;
-    while((c = getchar()) != EOF){
+    while((c = getchar()) != EOF) {
         if(c == '\t'){
             c = ' ';
             printf("%*c",identation, c);
-        } else 
-            printf("%c",c);
+        } else printf("%c",c);
     }
 }

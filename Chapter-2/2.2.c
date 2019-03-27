@@ -1,10 +1,8 @@
 #include <stdio.h>
 
-int c_getline(char s[], int lim)
-{
+int c_getline(char s[], int lim) {
     int c, i;
-    for(i = 0; i < lim - 1 ; ++i)
-    {
+    for(i = 0; i < lim - 1 ; ++i) {
         if((c = getchar()) == EOF) break;
         if(c == '\n') 
 			break;

@@ -1,34 +1,36 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 // #include <unistd.h>
-// #include <stdlib.h>
 
 #define BUFSIZE	1024
 #define PERMITIONS 0666
-#define NULL 0
-#define EOF -1
 #define OPEN_MAX 20
 
 typedef struct _iobuf {
     int cnt;
     char* ptr;
     char* base;
-    int flag;
+    struct {
+        unsigned int read  : 1;
+        unsigned int write : 1;
+        unsigned int unbuf : 1;
+        unsigned int eof   : 1;
+        unsigned int err   : 1;
+    } flag;
     int fd;
 } FILE;
 
 extern FILE _iob[OPEN_MAX];
 
-#define stdin (&_iob[0])
+#define stdin  (&_iob[0])
 #define stdout (&_iob[1])
 #define stderr (&_iob[2])
 
-enum _flags {
-    _READ = 01,
-    _WRITE = 02,
-    _UNBUF = 04,
-    _EOF = 010,
-    _ERR = 020
+FILE _iob[OPEN_MAX] = {
+	{ 0, NULL, NULL, { !0, 0, 0, 0, 0 },  0 },
+	{ 0, NULL, NULL, { 0, !0, 0, 0, 0 },  1 },
+	{ 0, NULL, NULL, { 0, !0, !0, 0, 0 }, 2 }
 };
 
 int _fillbuf(FILE *);
@@ -54,7 +56,7 @@ FILE* fopen(char * name, char * mode){
     if(*mode != 'r' && *mode != 'w' && *mode != 'a')
         return NULL;
     for (fp = _iob; fp < _iob + OPEN_MAX; fp++)
-        if ((fp->flag & (_READ | _WRITE)) == 0)
+        if (!fp->flag.read && !fp->flag.write)
             break;
     if (fp >= _iob + OPEN_MAX)
         return NULL;
@@ -74,36 +76,35 @@ FILE* fopen(char * name, char * mode){
     fp->fd = fd;
     fp->cnt = 0;
     fp->base = NULL;
-    fp->flag = (*mode = 'r') ? _READ : _WRITE;
+    fp->flag.read = fp->flag.write = fp->flag.eof = fp->flag.err = fp->flag.unbuf = 0; 
+    if ((*mode = 'r'))
+        fp->flag.read = 1;
+    else
+        fp->flag.write = 1;
     return fp;
 }
 
-int _fillbug(FILE * fp) {
+int _fillbuf(FILE * fp) {
     int bufsize;
 
-    if ((fp->flag&(_READ|_EOF|_ERR)) != _READ)
+	if (!fp->flag.read || fp->flag.eof || fp->flag.err)
         return EOF;
 
-    bufsize = (fp->flag & _UNBUF) ? 1 : BUFSIZ;
+    bufsize = fp->flag.unbuf ? 1 : BUFSIZ;
     if (fp->base == NULL)
         if ((fp->base = (char*) malloc(bufsize)) == NULL)
             return EOF;
     
     fp->ptr = fp->base;
-    fp->cnt = read(fp->fd, fp->ptr,bufsize);
+    fp->cnt = read(fp->fd, fp->ptr, bufsize);
     if (--fp->cnt < 0) {
         if(fp->cnt == -1)
-            fp->flag |= _EOF;
+            fp->flag.eof = 1;
         else
-            fp->flag |= _ERR;
+            fp->flag.err = 1;
         fp->cnt = 0;
         return EOF;
     }
     return (unsigned char) *fp->ptr++;
 }
 
-FILE _iob[OPEN_MAX] = {
-    { 0, (char*) 0, (char*) 0, _READ, 0},
-    { 0, (char*) 0, (char*) 0, _WRITE, 1},
-    { 0, (char*) 0, (char*) 0, _WRITE | _UNBUF, 2},
-};

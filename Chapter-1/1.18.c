@@ -1,33 +1,26 @@
 #include <stdio.h>
-#define true 1
-#define false 0
-typedef int bool;
 
-bool is_delimiter(char ch)
-{
+#define MAXLEN 100
+
+int is_delimiter(char ch) {
     return ch == ' ' || ch == '\t';
 }
 
-int main()
-{
+int main() {
     char ch;
-    char line[1000] = "";
+    char line[MAXLEN];
+    char dest[MAXLEN]; 
+
     int index = 0;
-    bool added = false;
-    while((ch = getchar()) != EOF)
-    {
-        if(ch == '\n') continue;
-        if(is_delimiter(ch) && !added)
-        {
-            added = true;
-            line[index++] = ch;
-        }
-        else if(!is_delimiter(ch))
-        {
-            line[index++] = ch;
-            added = false;
-        }
+    while((ch = getchar()) != EOF) {
+        if(ch == '\n') 
+            continue;
+        line[index++] = ch;
     }
+    line[index--] = 0;
+
+    while(is_delimiter(line[index]) && --index);
+    line[++index] = 0;
     printf("%s", line);
     return 0;
 }

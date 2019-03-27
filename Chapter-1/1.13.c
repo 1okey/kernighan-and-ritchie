@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAXLEN 80
+
 char* write_word(){
-    char *string = (char*) malloc(8 * sizeof(char));
+    char *string = (char*) malloc(MAXLEN * sizeof(char));
     char s;
     int length = 0;
     while((s = getchar()) != '\n' && ++length)
