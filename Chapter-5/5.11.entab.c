@@ -1,18 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define TAB 0x09
+#define IDENTATION 4
 
 int main(int argc, char ** argv){
-    if(argc >= 3){
-        printf("too many arguments");
-        return 1;
+    int identation = IDENTATION;
+    if(argc == 2){
+        identation = atoi(*(argv + 1));
     }
-    if(argc == 1){
-        printf("not enough arguments");
-        return 1;
-    }
-
-    int identation = atoi(*(argv + 1));
     char c; int idnt_counter = 0;
     while((c = getchar()) != EOF){
         if(c == ' '){

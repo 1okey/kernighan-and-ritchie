@@ -1,21 +1,14 @@
 #include <stdio.h>
-
+#define IDENTATION 4
 int main(int argc, char ** argv){
-    if(argc >= 3){
-        printf("too many arguments");
-        return 1;
+    int identation = IDENTATION;
+    if(argc == 2){
+        identation = atoi(*(argv + 1));
     }
-    if(argc == 1){
-        printf("not enough arguments");
-        return 1;
-    }
-
-    int identation = atoi(*(argv + 1));
     char c;
     while((c = getchar()) != EOF){
         if(c == '\t'){
-            c = ' ';
-            printf("%*c", identation, c);
+            printf("%*c", identation, ' ');
         } else 
             printf("%c",c);
     }

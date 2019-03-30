@@ -5,7 +5,7 @@
 #define MAXTOKEN 100
 #define BUFSIZE 100
 
-enum { NAME, PARENS, BRACKETS };
+enum { NAME, PARENS, BRACKETS, QUALIFIER, TYPE };
 
 void dcl(void);
 void dirdcl(void);
@@ -54,6 +54,10 @@ void dirdcl(void) {
             printf("error: missing )\n");
     } else if (tokentype == NAME) {
         strcpy(name, token);
+    } else if (tokentype == QUALIFIER) {
+        printf("const");
+    } else if (tokentype == TYPE) { 
+        printf("type");
     } else {
         printf("error: expected name or (dcl)\n");
     }
@@ -91,7 +95,13 @@ int gettoken(void) {
             *p++ = c;
         *p = 0;
         ungetch(c);
-        return tokentype = NAME;
+        if(!strcmp(p, "const") || !strcmp(p, "register")){
+            return tokentype = QUALIFIER;
+        } else if (!strcmp(token, "char") || !strcmp(token, "int") || !strcmp(token, "double")) {
+			return tokentype = TYPE;
+        } else {
+            return tokentype = NAME;
+        }
     } else return tokentype = c;
 }
 

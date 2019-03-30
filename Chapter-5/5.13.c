@@ -30,7 +30,7 @@ int main (int argc, char *argv[]){
 
 #define MAXLEN	1000
 
-int getline (char line[], int limit);
+int cgetline (char line[], int limit);
 char *alloc (int n);
 
 int readlines (char *lineptr[], int maxlines){
@@ -38,7 +38,7 @@ int readlines (char *lineptr[], int maxlines){
     char *p, line[MAXLEN];
 
     nlines = 0;
-    while ((len = getline(line, MAXLEN)) > 0)
+    while ((len = cgetline(line, MAXLEN)) > 0)
 
         if (nlines >= maxlines || (p = alloc(len)) == NULL)
             return -1;
@@ -57,7 +57,7 @@ void writelines (char *lineptr[], int nlines){
         printf("%s\n", lineptr[i]);
 }
 
-int getline (char line[], int limit){
+int cgetline (char line[], int limit){
     int i, c;
     for (i = 0; i < limit - 1 && (c = getchar()) != EOF && c != '\n'; i++)
         line[i] = c;
