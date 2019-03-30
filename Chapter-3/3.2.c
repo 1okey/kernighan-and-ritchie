@@ -1,4 +1,4 @@
-#define EOF 0
+#define EOF -1
 #include <stdio.h>
 
 void escape(){
