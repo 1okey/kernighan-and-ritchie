@@ -10,15 +10,34 @@ static int stack_ptr = 0;
 static double values[MAXVAL];
 static double VARIABLES[26];
 static char VARIABLE = ' ';
+const static char * help_str = 
+    "Available commands: \n"
+    "[+] - addition\n"
+    "[-] - subtraction\n"
+    "[/] - division\n"
+    "[*] - multiplication\n"
+    "[%] - modulus\n"
+    "[^] - power\n"
+    "[~] - sine\n"
+    "[E] - exponent\n"
+    "[D] - duplicate (duplicate last entered element)\n"
+    "[C] - clear\n"
+    "[=] - swap places of last two entered elements\n"
+    "[>] - read number into. Example: '3 a >'. \n"
+    "[<] - read value of variable. Example: 'a <' \n\n"
+    "Calculator parses reverse polish notation, so to execute you input shood look as followed:\n"
+    "'3 4 +'   -- should save 7\n"
+    "'3 a >'   -- should save 3 into variable 'a'\n"
+    "'6 a < +' -- should read value of a and sum it with 6 and save result\n"
+    "'5 6 *'   -- should multiply 5 by 6";
 
-int getop(char*c, char*);
+int getop(char*c, char*, int*);
 void push(double);
 double pop(void);
 int getch(void);
 void ungetch(int);
 void ungets(char s[]);
 void init_variables();
-void print_help();
 int cgetline(char*);
 
 // Commands
@@ -52,7 +71,8 @@ int main() {
     init_variables();
 
     while (cgetline(line)) {
-        while ((type = getop(line, s)) != EOF) {
+        int index = 0;
+        while ((type = getop(line, s, &index))) {
             switch(type) {
             case NUM: push(atof(s));                break;
             case ADD: push(pop() + pop());          break;
@@ -60,13 +80,13 @@ int main() {
             case SIN: push(sin(pop()));             break;
             case EXP: push(exp(pop()));             break;
             case CLR: while(stack_ptr > 1) pop();   break;
-            case HLP: print_help();                 break;
+            case HLP: printf("%s", help_str);       break;
             case VAR:                               break;
             case POW:
                 op2 = pop();
                 push(pow(pop(),op2));
                 break;
-            case PNT: 
+            case PNT:
                 if(stack_ptr > 0) {
                     op1 = pop();
                     printf("= %.8g\n", pop());
@@ -124,27 +144,6 @@ int main() {
     return 0;
 }
 
-void print_help(){
-    char* help_str = "Available commands: \n"
-    "[+] - addition\n"
-    "[-] - subtraction\n"
-    "[/] - division\n"
-    "[*] - multiplication\n"
-    "[%] - modulus\n"
-    "[^] - power\n"
-    "[~] - sine\n"
-    "[E] - exponent\n"
-    "[D] - duplicate (duplicate last entered element)\n"
-    "[C] - clear\n"
-    "[=] - swap places of last two entered elements\n"
-    "IN  = '<\n"
-    "OUT = '>\n"
-    "VAR = 'a\n"
-    "Calculator parses reverse polish notation, so to execute you input shood look as followed:\n"
-    "3 4 +\n 5 6 *";
-    printf("%s", help_str);
-}
-
 void init_variables(){
     for(char start = 'a'; start < 'z'; ++start) {
         VARIABLES[start - 'a'] = 0.0;
@@ -167,21 +166,21 @@ double pop(void) {
     }
 }
 
-int getop(char* line, char *s) {
+int getop(char* line, char *s, int* index) {
     int i = 0, c = 0;
     int sign = 0;
-    while ((s[0] = c = *line++) == ' ' || c == '\t');
+    while ((s[0] = c = line[(*index)++]) == ' ' || c == '\t');
     // s[1] = '\0';
 
     char next;
     if(c == '-'){
-        next = *++line;
+        next = line[(*index)++];
         if(isdigit(next)) {
-            --line;
+            --(*index);
             c = next;
         }
         else {
-            --line;
+            --(*index);
             return c;
         }
     } else if(!isdigit(c) && c != '.') {
@@ -194,20 +193,20 @@ int getop(char* line, char *s) {
 
     i = 0;
     if (isdigit(c))
-        while (isdigit(s[++i] = c = *line++));
+        while (isdigit(s[++i] = c = line[(*index)++]));
     if (c == '.')
-        while (isdigit(s[++i] = c = *line++));
+        while (isdigit(s[++i] = c = line[(*index)++]));
     s[i] = '\0';
     if (c != EOF)
-        --line;
+        --(*index);
     return NUM;
 }
 
 int cgetline(char *s) {
     int c, i;
-    for(i = 0; (c = getchar()) != EOF && c != '\n'; ++i) 
+    for(i = 0; (c = getchar()) != EOF && c != '\n'; ++i)
         s[i] = c;
-    if (c == '\n') 
+    if (c == '\n')
         s[i++] = c;
     s[i] = '\0';
     return i;
